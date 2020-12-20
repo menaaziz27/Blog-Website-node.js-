@@ -34,8 +34,14 @@ app.get('/about', (req, res) => {
 app.get('/contact', (req, res) => {
     res.render('contact')
 })
-app.get('/post', (req, res) => {
-    res.render('post')
+
+// if we tried to type localhost:3000/post/123456
+app.get('/post/:id', async (req, res) => {
+    console.log(req.params.id); // 123456 printed out
+    const blogPost = await BlogPost.findById(req.params.id);
+    res.render('post', {
+        blogPost
+    })
 })
 app.get('/posts/new', (req, res) => {
     res.render('create')
