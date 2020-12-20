@@ -1,38 +1,40 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 require('ejs')
-const BlogPost = require('./models/BlogPost');
+const fileUpload = require('express-fileupload');
 
 const path = require('path');
 
-const mongoose = require('mongoose');
+const BlogPost = require('./models/BlogPost');
+
 mongoose.connect('mongodb://localhost/my_database', {
     useNewUrlParser: true,
     useFindAndModify: false,
     useUnifiedTopology: true,
 });
 
-
 const app = express();
 
-app.set('view engine', 'ejs')
+app.set('view engine', 'ejs');
 app.use(express.static('public'));
+app.use(fileUpload());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/', async (req, res) => {
     const blogs = await BlogPost.find({});
-    console.log(blogs)
+    // console.log(blogs);
     res.render('index', {
         blogs
     });
 })
 app.get('/about', (req, res) => {
-    res.render('about')
+    res.render('about');
 })
 app.get('/contact', (req, res) => {
-    res.render('contact')
+    res.render('contact');
 })
 
 // if we tried to type localhost:3000/post/123456
@@ -44,16 +46,20 @@ app.get('/post/:id', async (req, res) => {
     })
 })
 app.get('/posts/new', (req, res) => {
-    res.render('create')
+    res.render('create');
 })
 
 // Create blog
 app.post('/posts/store', async (req, res) => {
+    const image = req.files.image;
+    console.log(image);
+    image.mv(path.resolve(__dirname, 'public/img', image.name), async (err) => {
+        await BlogPost.create({ ...req.body, image: /img/ + image.name }); //spread operator
+        res.redirect('/');
+    });
     // console.log(req.body);
     // console.log(req.body.title);
     // console.log(req.body.body);
-    await BlogPost.create(req.body)
-    res.redirect('/')
 })
 
 app.post('/posts/search', async (req, res) => {
@@ -61,8 +67,8 @@ app.post('/posts/search', async (req, res) => {
     const search = req.body.search;
     const blogs = await BlogPost.find(); // return array of matched objects
     const matchedBlogs = blogs.filter((obj) => obj.title.toLowerCase().includes(search.toLowerCase()) ||
-        obj.body.toLowerCase().includes(search.toLowerCase()))
-    console.log(matchedBlogs)
+        obj.body.toLowerCase().includes(search.toLowerCase()));
+    console.log(matchedBlogs);
     res.render('index', {
         blogs: matchedBlogs
     })
