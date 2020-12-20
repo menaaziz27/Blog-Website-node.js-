@@ -25,23 +25,32 @@
       <!-- Main Content -->
       <div class="container">
         <div class="row">
-          <div class="col-lg-8 col-md-10 mx-auto">
-            <div class="post-preview">
-              <a href="/post">
-                <h2 class="post-title">
-                  Man must explore, and this is exploration at its greatest
-                </h2>
-                <h3 class="post-subtitle">
-                  Problems look mighty small from 150 miles up
-                </h3>
-              </a>
-              <p class="post-meta">Posted by
-                <a href="#">Start Bootstrap</a>
-                on September 24, 2019
-              </p>
+          <form action="/posts/search" method="POST">
+            <div class="md-form mt-0">
+              <input style="margin-left:300px" name="search" class="form-control" type="text" placeholder="Search"
+                aria-label="Search">
+              <!-- <input class="btn btn-success" type="submit" value="Submit"> -->
             </div>
-            <hr>
-            <div class="post-preview">
+          </form>
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <% for (let blog of blogs) { %>
+              <div class="post-preview">
+                <a href="/post/">
+                  <h2 class="post-title">
+                    <%= blog.title %>
+                  </h2>
+                  <h3 class="post-subtitle">
+                    <%= blog.body %>
+                  </h3>
+                </a>
+                <p class="post-meta">Posted by
+                  <a href="/post/">Start Bootstrap</a>
+                  on September 24, 2019
+                </p>
+              </div>
+              <hr>
+              <% } %>
+                <!-- <div class="post-preview">
               <a href="/post">
                 <h2 class="post-title">
                   I believe every human has a finite number of heartbeats. I don't intend to waste any of mine.
@@ -67,8 +76,8 @@
                 on August 24, 2019
               </p>
             </div>
-            <hr>
-            <div class="post-preview">
+            <hr> -->
+                <!-- <div class="post-preview">
               <a href="/post">
                 <h2 class="post-title">
                   Failure is not an option
@@ -82,11 +91,11 @@
                 on July 8, 2019
               </p>
             </div>
-            <hr>
-            <!-- Pager -->
-            <div class="clearfix">
-              <a class="btn btn-primary float-right" href="#">Older Posts &rarr;</a>
-            </div>
+            <hr> -->
+                <!-- Pager -->
+                <div class="clearfix">
+                  <a class="btn btn-primary float-right" href="#">Older Posts &rarr;</a>
+                </div>
           </div>
         </div>
       </div>
