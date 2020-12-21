@@ -25,6 +25,11 @@ mongoose.connect('mongodb://localhost/my_database', {
     useNewUrlParser: true,
     useFindAndModify: false,
     useUnifiedTopology: true,
+}, (err, db) => {
+    if (err) {
+        throw new Error(err);
+    }
+    console.log('Connected')
 });
 
 const app = express();
@@ -66,10 +71,11 @@ app.post('/posts/search', searchController);
 // User routes
 app.get('/auth/user', newUserController);
 
+// register button
 app.post('/users/register', storeUserController)
-
+// get login page
 app.get('/auth/login', loginController)
-
+// login button
 app.post('/users/login', loginUserController)
 
 app.listen(3000);
