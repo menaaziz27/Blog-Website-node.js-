@@ -4,6 +4,11 @@ const bodyParser = require('body-parser');
 require('ejs')
 const fileUpload = require('express-fileupload');
 
+// fix all deprecated warnings 
+mongoose.set('useNewUrlParser', true);
+mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
+
 
 const newPostController = require('./controllers/newPost');
 const homeController = require('./controllers/home');
@@ -11,6 +16,10 @@ const searchController = require('./controllers/search');
 const getPostController = require('./controllers/getPost');
 const storePostController = require('./controllers/storePost');
 const validationMiddleware = require('./middleware/validationMiddleware');
+const newUserController = require('./controllers/newUser');
+const storeUserController = require('./controllers/storeUser');
+const loginController = require('./controllers/login');
+const loginUserController = require('./controllers/loginUser');
 
 mongoose.connect('mongodb://localhost/my_database', {
     useNewUrlParser: true,
@@ -46,11 +55,21 @@ app.get('/', homeController);
 
 // if we tried to type localhost:3000/post/123456
 app.get('/post/:id', getPostController)
+// to create new blog
 app.get('/posts/new', newPostController);
 
 // Create blog
-app.post('/posts/store', storePostController)
-
+app.post('/posts/store', storePostController);
+// search for a blog
 app.post('/posts/search', searchController);
+
+// User routes
+app.get('/auth/user', newUserController);
+
+app.post('/users/register', storeUserController)
+
+app.get('/auth/login', loginController)
+
+app.post('/users/login', loginUserController)
 
 app.listen(3000);
