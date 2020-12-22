@@ -25,7 +25,7 @@ const loginController = require('./controllers/login');
 const loginUserController = require('./controllers/loginUser');
 const logoutUserController = require('./controllers/logout');
 
-mongoose.connect('mongodb://localhost:27017/my_database', {
+mongoose.connect('mongodb+srv://Azzouz:root@cluster0.scq7v.mongodb.net/test', {
     useNewUrlParser: true,
     useFindAndModify: false,
     useUnifiedTopology: true,
