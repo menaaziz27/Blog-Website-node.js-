@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const expressSession = require('express-session');
+const cookieParser = require('cookie-parser')
 require('ejs')
 const fileUpload = require('express-fileupload');
 
@@ -22,6 +23,7 @@ const newUserController = require('./controllers/newUser');
 const storeUserController = require('./controllers/storeUser');
 const loginController = require('./controllers/login');
 const loginUserController = require('./controllers/loginUser');
+const logoutUserController = require('./controllers/logout');
 
 mongoose.connect('mongodb://localhost:27017/my_database', {
     useNewUrlParser: true,
@@ -35,13 +37,28 @@ mongoose.connect('mongodb://localhost:27017/my_database', {
 });
 
 const app = express();
-
-app.set('view engine', 'ejs');
-app.use(express.static('public'));
-app.use(fileUpload()); // adds files property to the req object
 app.use(expressSession({
     secret: 'keyboard cat'
 }))
+global.loggedIn = null;
+
+// !this function uses property inside our session property 
+// !so we must app.use(expressParser()) before this function 
+app.use('*', (req, res, next) => {
+    // console.log(req.session.userId);
+    try {
+        loggedIn = req.session.userId;
+        //console.log(loggedIn) // if userId = undefined => user not logged in else loggedIn = user._id
+        next();
+    } catch (e) {
+        res.send(e);
+    }
+})
+
+
+app.set('view engine', 'ejs')
+app.use(express.static('public'));
+app.use(fileUpload()); // adds files property to the req object
 // app.use('/posts/new', authMiddleware);
 
 app.use(bodyParser.json());
@@ -57,9 +74,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 // app.use(validationMiddleware);
-
 app.use('/posts/store', validationMiddleware);
-
 
 // orders matter from here
 app.get('/', homeController);
@@ -67,10 +82,12 @@ app.get('/', homeController);
 // if we tried to type localhost:3000/post/123456
 app.get('/post/:id', getPostController)
 // to create new blog
-app.get('/posts/new', newPostController, authMiddleware); // !notice
+app.get('/posts/new', authMiddleware, newPostController); // !notice
 
+
+// !note : authMiddlewares must come first in the pipeline 
 // Create blog
-app.post('/posts/store', storePostController);
+app.post('/posts/store', authMiddleware, storePostController);
 // search for a blog
 app.post('/posts/search', searchController);
 
@@ -83,5 +100,10 @@ app.post('/users/register', storeUserController)
 app.get('/auth/login', redirectIfAuthenticatedMiddleware, loginController)
 // login button
 app.post('/users/login', loginUserController)
+// get logout page
+app.get('/auth/logout', logoutUserController);
+
+// handling 404 page
+app.use((req, res) => res.render('notfound'))
 
 app.listen(3000);
