@@ -4,7 +4,12 @@ module.exports = async (req, res) => {
     const image = req.files.image;
     console.log(image);
     image.mv(path.resolve(__dirname, 'public/img', image.name), async (err) => {
-        await BlogPost.create({ ...req.body, image: /img/ + image.name }); //spread operator
+        await BlogPost.create({
+            ...req.body, //title,body,dataPosted, _id
+            image: /img/ + image.name,
+            userid: req.session.userId
+        }); //spread operator
+        console.log(`/img/${image.name}`)
         res.redirect('/');
     });
     // console.log(req.body);

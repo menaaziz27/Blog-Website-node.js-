@@ -40,12 +40,13 @@
                     <%= blog.title %>
                   </h2>
                   <h3 class="post-subtitle">
-                    <%= blog.body %>
+                    <!-- <%= blog.body %> -->
+                    <%- blog.body %>
                   </h3>
                 </a>
                 <p class="post-meta">Posted by
-                  <a href="/post/<%= blog._id %>">
-                    <%= blog.username %>
+                  <a href="/post/<%= blog.userid.username %>">
+                    <%= blog.userid.username %>
                   </a>
                   <%= blog.datePosted.toDateString() %>
                 </p>

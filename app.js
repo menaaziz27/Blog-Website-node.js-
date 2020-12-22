@@ -37,6 +37,15 @@ mongoose.connect('mongodb://localhost:27017/my_database', {
 });
 
 const app = express();
+
+app.set('view engine', 'ejs')
+app.use(express.static('public'));
+app.use(fileUpload()); // adds files property to the req object
+// app.use('/posts/new', authMiddleware);
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
 app.use(expressSession({
     secret: 'keyboard cat'
 }))
@@ -56,13 +65,6 @@ app.use('*', (req, res, next) => {
 })
 
 
-app.set('view engine', 'ejs')
-app.use(express.static('public'));
-app.use(fileUpload()); // adds files property to the req object
-// app.use('/posts/new', authMiddleware);
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 
 // custom middleware
 // all app.use() functions calls next()
@@ -74,7 +76,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 // app.use(validationMiddleware);
-app.use('/posts/store', validationMiddleware);
+// app.use('/posts/store', validationMiddleware);
 
 // orders matter from here
 app.get('/', homeController);
@@ -86,8 +88,8 @@ app.get('/posts/new', authMiddleware, newPostController); // !notice
 
 
 // !note : authMiddlewares must come first in the pipeline 
-// Create blog
-app.post('/posts/store', authMiddleware, storePostController);
+// Create blog button
+app.post('/posts/store', authMiddleware, validationMiddleware, storePostController);
 // search for a blog
 app.post('/posts/search', searchController);
 
