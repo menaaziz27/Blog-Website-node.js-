@@ -25,7 +25,9 @@ const loginController = require('./controllers/login');
 const loginUserController = require('./controllers/loginUser');
 const logoutUserController = require('./controllers/logout');
 
-mongoose.connect('mongodb+srv://Azzouz:root@cluster0.scq7v.mongodb.net/test', {
+let PORT = process.env.PORT || 3000;
+
+mongoose.connect('mongodb+srv://Azzouz:root@cluster0.scq7v.mongodb.net/my_database', {
     useNewUrlParser: true,
     useFindAndModify: false,
     useUnifiedTopology: true,
@@ -108,4 +110,6 @@ app.get('/auth/logout', logoutUserController);
 // handling 404 page
 app.use((req, res) => res.render('notfound'))
 
-app.listen(3000);
+app.listen(PORT, () => {
+    console.log('App is listening... ')
+});
